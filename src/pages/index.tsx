@@ -2,6 +2,7 @@
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { GetStaticProps } from 'next';
+import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -55,40 +56,45 @@ export default function Home({ postsPagination }: HomeProps) {
     } catch (error) { }
   };
   return (
-    <main className={styles.Container}>
-      <Image src="/images/logo.svg" alt="logo" width={240} height={25} />
-      <section>
-        {posts.map(post => (
-          <Link href={`post/${post.uid}`} key={post.uid}>
-            <div className={styles.Post} >
-              <strong>{post.data.title}</strong>
-              <p>{post.data.subtitle}</p>
-              <span>
-                <FiCalendar />
-                <time>
-                  {format(new Date(post.first_publication_date), 'PP', {
-                    locale: ptBR,
-                  })}
-                </time>
-                <FiUser />
-                <p>{post.data.author}</p>
-              </span>
-            </div>
-          </Link>
-        ))}
-      </section>
-      {
-        nextPage && (
-          <button
-            className={styles.MorePosts}
-            type="button"
-            onClick={() => getNextPage(nextPage)}
-          >
-            Carregar mais posts
-          </button>
-        )
-      }
-    </main>
+    <>
+      <Head>
+        <title>Home - Spacetravelling.</title>
+      </Head>
+      <main className={styles.Container}>
+        <Image src="/images/logo.svg" alt="logo" width={240} height={25} />
+        <section>
+          {posts.map(post => (
+            <Link href={`post/${post.uid}`} key={post.uid}>
+              <div className={styles.Post} >
+                <strong>{post.data.title}</strong>
+                <p>{post.data.subtitle}</p>
+                <span>
+                  <FiCalendar />
+                  <time>
+                    {format(new Date(post.first_publication_date), 'PP', {
+                      locale: ptBR,
+                    })}
+                  </time>
+                  <FiUser />
+                  <p>{post.data.author}</p>
+                </span>
+              </div>
+            </Link>
+          ))}
+        </section>
+        {
+          nextPage && (
+            <button
+              className={styles.MorePosts}
+              type="button"
+              onClick={() => getNextPage(nextPage)}
+            >
+              Carregar mais posts
+            </button>
+          )
+        }
+      </main>
+    </>
   );
 }
 
