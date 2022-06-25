@@ -1,3 +1,6 @@
+/* eslint-disable prettier/prettier */
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 import { GetStaticProps } from 'next';
 import Image from 'next/image';
 
@@ -26,42 +29,58 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home() {
+export default function Home({ postsPagination }: HomeProps) {
   return (
     <main className={styles.Container}>
       <Image src="/images/logo.svg" alt="logo" width={240} height={25} />
       <section>
-        <div className={styles.Post}>
-          <strong>Como utilizar Hooks</strong>
-          <p>Pensando em sincronização em vez de ciclos de vida.</p>
-          <span>
-            <FiCalendar />
-            <time>15 mar 2021</time>
-            <FiUser />
-            <p>Nome do autor</p>
-          </span>
-        </div>
-        <div className={styles.Post}>
-          <strong>Como utilizar Hooks</strong>
-          <p>Pensando em sincronização em vez de ciclos de vida.</p>
-          <span>
-            <FiCalendar />
-            <time>15 mar 2021</time>
-            <FiUser />
-            <p>Nome do autor</p>
-          </span>
-        </div>
+        {postsPagination.results.map(post => (
+          <div className={styles.Post} key={post.uid}>
+            <strong>{post.data.title}</strong>
+            <p>{post.data.subtitle}</p>
+            <span>
+              <FiCalendar />
+              <time>
+                {format(new Date(post.first_publication_date), 'PP', {
+                  locale: ptBR,
+                })}
+              </time>
+              <FiUser />
+              <p>{post.data.author}</p>
+            </span>
+          </div>
+        ))}
       </section>
-      <button className={styles.MorePosts} type="button">
+      {
+        postsPagination.next_page && (
+          <button className={styles.MorePosts} type="button">
         Carregar mais posts
       </button>
+        )
+      }
     </main>
   );
 }
 
-// export const getStaticProps = async () => {
-//   // const prismic = getPrismicClient({});
-//   // const postsResponse = await prismic.getByType(TODO);
+export const getStaticProps: GetStaticProps = async () => {
+  const prismic = getPrismicClient({});
+  const postsResponse = await prismic.getByType('posts');
 
-//   // TODO
-// };
+  const props: HomeProps = {
+    postsPagination: {
+      next_page: postsResponse.next_page,
+      results: postsResponse.results.map(post => ({
+        uid: post.uid,
+        first_publication_date: post.first_publication_date,
+        data: {
+          author: post.data.author,
+          title: post.data.title,
+          subtitle: post.data.subtitle,
+        },
+      })),
+    },
+  };
+  return {
+    props,
+  };
+};
