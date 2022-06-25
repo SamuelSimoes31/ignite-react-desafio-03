@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { GetStaticProps } from 'next';
 import Image from 'next/image';
+import { useState } from 'react';
 
 import { FiCalendar, FiUser } from 'react-icons/fi';
 import { getPrismicClient } from '../services/prismic';
@@ -30,11 +31,33 @@ interface HomeProps {
 }
 
 export default function Home({ postsPagination }: HomeProps) {
+  const [posts, setPosts] = useState(postsPagination.results);
+  const [nextPage, setNextPage] = useState(postsPagination.next_page)
+
+  const getNextPage = async (next_page: string) => {
+    try {
+      await fetch(next_page)
+        .then(response => response.json())
+        .then(data => {
+          const newPosts: Post[] = data.results.map(post => ({
+            uid: post.uid,
+            first_publication_date: post.first_publication_date,
+            data: {
+              author: post.data.author,
+              title: post.data.title,
+              subtitle: post.data.subtitle,
+            },
+          }))
+          setPosts(p => [...p,...newPosts]);
+          setNextPage(data.next_page)
+        });
+    } catch (error) { }
+  };
   return (
     <main className={styles.Container}>
       <Image src="/images/logo.svg" alt="logo" width={240} height={25} />
       <section>
-        {postsPagination.results.map(post => (
+        {posts.map(post => (
           <div className={styles.Post} key={post.uid}>
             <strong>{post.data.title}</strong>
             <p>{post.data.subtitle}</p>
@@ -52,10 +75,14 @@ export default function Home({ postsPagination }: HomeProps) {
         ))}
       </section>
       {
-        postsPagination.next_page && (
-          <button className={styles.MorePosts} type="button">
-        Carregar mais posts
-      </button>
+        nextPage && (
+          <button
+            className={styles.MorePosts}
+            type="button"
+            onClick={() => getNextPage(nextPage)}
+          >
+            Carregar mais posts
+          </button>
         )
       }
     </main>
@@ -64,7 +91,9 @@ export default function Home({ postsPagination }: HomeProps) {
 
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient({});
-  const postsResponse = await prismic.getByType('posts');
+  const postsResponse = await prismic.getByType('posts', {
+    pageSize: 1
+  });
 
   const props: HomeProps = {
     postsPagination: {
