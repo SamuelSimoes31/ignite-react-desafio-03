@@ -88,20 +88,18 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await prismic.getByType('posts');
 
   return {
-    paths: [
-      {
-        params: {
-          slug: posts.results[0].uid,
-        },
+    paths: posts.results.map(post => ({
+      params: {
+        slug: post.uid,
       },
-    ],
+    })),
     fallback: true,
   };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const prismic = getPrismicClient({});
-  const response = await prismic.getByUID('posts', params.slug as string);
+  const response = await prismic.getByUID('posts', String(params.slug));
 
   return {
     props: {
