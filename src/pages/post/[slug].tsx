@@ -5,6 +5,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import { RichText } from 'prismic-dom';
+import { useRouter } from 'next/router';
 import Header from '../../components/Header';
 
 import { getPrismicClient } from '../../services/prismic';
@@ -34,6 +35,8 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
+  const router = useRouter();
+
   const timeToRead =
     post.data.content.reduce((prev, section) => {
       return (prev +=
@@ -45,7 +48,7 @@ export default function Post({ post }: PostProps) {
       <Head>POST</Head>
       <div className={styles.Container}>
         <Header />
-        {post ? (
+        {!router.isFallback ? (
           <>
             <img src={post.data.banner.url} alt="" className={styles.Banner} />
             <article className={styles.Post}>
