@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import { RichText } from 'prismic-dom';
 import { useRouter } from 'next/router';
+import { Fragment } from 'react';
 import Header from '../../components/Header';
 
 import { getPrismicClient } from '../../services/prismic';
@@ -67,7 +68,7 @@ export default function Post({ post }: PostProps) {
                 <p>{Math.ceil(timeToRead)} min</p>
               </span>
               {post.data.content.map(section => (
-                <>
+                <Fragment key={section.heading}>
                   <h4 className={styles.HeadingContent}>{section.heading}</h4>
                   <div
                     dangerouslySetInnerHTML={{
@@ -75,7 +76,7 @@ export default function Post({ post }: PostProps) {
                     }}
                     className={styles.PostContent}
                   />
-                </>
+                </Fragment>
               ))}
             </article>
           </>
