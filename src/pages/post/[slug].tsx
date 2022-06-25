@@ -38,9 +38,10 @@ export default function Post({ post }: PostProps) {
   const router = useRouter();
 
   const timeToRead =
-    post.data.content.reduce((prev, section) => {
-      return (prev +=
-        section.heading.length + RichText.asText(section.body).length);
+    post.data.content.reduce((acc, section) => {
+      const wordsOnHeading = section.heading.split(' ').length;
+      const wordsOnBody = RichText.asText(section.body).split(' ').length;
+      return (acc += wordsOnHeading + wordsOnBody);
     }, 0) / 200;
 
   return (
@@ -63,7 +64,7 @@ export default function Post({ post }: PostProps) {
                 <FiUser />
                 <p>{post.data.author}</p>
                 <FiClock />
-                <p>{Math.ceil(timeToRead)} min.</p>
+                <p>{Math.ceil(timeToRead)} min</p>
               </span>
               {post.data.content.map(section => (
                 <>
