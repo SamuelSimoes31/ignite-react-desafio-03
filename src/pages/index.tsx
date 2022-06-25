@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { GetStaticProps } from 'next';
@@ -53,7 +52,7 @@ export default function Home({ postsPagination }: HomeProps) {
           setPosts(p => [...p, ...newPosts]);
           setNextPage(data.next_page);
         });
-    } catch (error) { }
+    } catch (error) {}
   };
   return (
     <>
@@ -65,7 +64,7 @@ export default function Home({ postsPagination }: HomeProps) {
         <section>
           {posts.map(post => (
             <Link href={`post/${post.uid}`} key={post.uid}>
-              <div className={styles.Post} >
+              <div className={styles.Post}>
                 <strong>{post.data.title}</strong>
                 <p>{post.data.subtitle}</p>
                 <span>
@@ -82,17 +81,15 @@ export default function Home({ postsPagination }: HomeProps) {
             </Link>
           ))}
         </section>
-        {
-          nextPage && (
-            <button
-              className={styles.MorePosts}
-              type="button"
-              onClick={() => getNextPage(nextPage)}
-            >
-              Carregar mais posts
-            </button>
-          )
-        }
+        {nextPage && (
+          <button
+            className={styles.MorePosts}
+            type="button"
+            onClick={() => getNextPage(nextPage)}
+          >
+            Carregar mais posts
+          </button>
+        )}
       </main>
     </>
   );
@@ -101,7 +98,7 @@ export default function Home({ postsPagination }: HomeProps) {
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient({});
   const postsResponse = await prismic.getByType('posts', {
-    pageSize: 1
+    pageSize: 1,
   });
 
   const props: HomeProps = {
