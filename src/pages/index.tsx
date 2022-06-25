@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { GetStaticProps } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import { FiCalendar, FiUser } from 'react-icons/fi';
@@ -32,7 +33,7 @@ interface HomeProps {
 
 export default function Home({ postsPagination }: HomeProps) {
   const [posts, setPosts] = useState(postsPagination.results);
-  const [nextPage, setNextPage] = useState(postsPagination.next_page)
+  const [nextPage, setNextPage] = useState(postsPagination.next_page);
 
   const getNextPage = async (next_page: string) => {
     try {
@@ -47,9 +48,9 @@ export default function Home({ postsPagination }: HomeProps) {
               title: post.data.title,
               subtitle: post.data.subtitle,
             },
-          }))
-          setPosts(p => [...p,...newPosts]);
-          setNextPage(data.next_page)
+          }));
+          setPosts(p => [...p, ...newPosts]);
+          setNextPage(data.next_page);
         });
     } catch (error) { }
   };
@@ -58,20 +59,22 @@ export default function Home({ postsPagination }: HomeProps) {
       <Image src="/images/logo.svg" alt="logo" width={240} height={25} />
       <section>
         {posts.map(post => (
-          <div className={styles.Post} key={post.uid}>
-            <strong>{post.data.title}</strong>
-            <p>{post.data.subtitle}</p>
-            <span>
-              <FiCalendar />
-              <time>
-                {format(new Date(post.first_publication_date), 'PP', {
-                  locale: ptBR,
-                })}
-              </time>
-              <FiUser />
-              <p>{post.data.author}</p>
-            </span>
-          </div>
+          <Link href={`post/${post.uid}`} key={post.uid}>
+            <div className={styles.Post} >
+              <strong>{post.data.title}</strong>
+              <p>{post.data.subtitle}</p>
+              <span>
+                <FiCalendar />
+                <time>
+                  {format(new Date(post.first_publication_date), 'PP', {
+                    locale: ptBR,
+                  })}
+                </time>
+                <FiUser />
+                <p>{post.data.author}</p>
+              </span>
+            </div>
+          </Link>
         ))}
       </section>
       {
