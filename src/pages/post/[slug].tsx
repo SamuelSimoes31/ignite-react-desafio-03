@@ -34,6 +34,12 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
+  const timeToRead =
+    post.data.content.reduce((prev, section) => {
+      return (prev +=
+        section.heading.length + RichText.asText(section.body).length);
+    }, 0) / 200;
+
   return (
     <>
       <Head>POST</Head>
@@ -54,7 +60,7 @@ export default function Post({ post }: PostProps) {
                 <FiUser />
                 <p>{post.data.author}</p>
                 <FiClock />
-                <p>4 min.</p>
+                <p>{Math.ceil(timeToRead)} min.</p>
               </span>
               {post.data.content.map(section => (
                 <>
