@@ -1,5 +1,10 @@
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
+import Image from 'next/image';
+import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
+import { RichText } from 'prismic-dom';
 import Header from '../../components/Header';
 
 import { getPrismicClient } from '../../services/prismic';
@@ -32,8 +37,41 @@ export default function Post({ post }: PostProps) {
   return (
     <>
       <Head>POST</Head>
-      <div>
+      <div className={styles.Container}>
         <Header />
+        {post ? (
+          <>
+            <img src={post.data.banner.url} alt="" className={styles.Banner} />
+            <article className={styles.Post}>
+              <h1>{post.data.title}</h1>
+              <span>
+                <FiCalendar />
+                <time>
+                  {format(new Date(post.first_publication_date), 'PP', {
+                    locale: ptBR,
+                  })}
+                </time>
+                <FiUser />
+                <p>{post.data.author}</p>
+                <FiClock />
+                <p>4 min.</p>
+              </span>
+              {post.data.content.map(section => (
+                <>
+                  <h4 className={styles.HeadingContent}>{section.heading}</h4>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: RichText.asHtml(section.body),
+                    }}
+                    className={styles.PostContent}
+                  />
+                </>
+              ))}
+            </article>
+          </>
+        ) : (
+          <p>Carregando...</p>
+        )}
       </div>
     </>
   );

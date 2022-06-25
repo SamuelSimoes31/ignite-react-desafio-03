@@ -1,1 +1,70 @@
-// TODO
+.Container {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Banner {
+  max-height: 25rem;
+}
+
+.Post {
+  width: 500px;
+  margin-top: 80px;
+
+  & > h1 {
+    color: var(--heading);
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 3.625rem;
+
+    letter-spacing: -0.5px;
+
+  }
+
+  & > span {
+    display: flex;
+    align-items: center;
+    svg {
+      margin-right: 0.5rem;
+    }
+
+    time:not(:last-child), p:not(:last-child) {
+      margin-right: 1.5rem;
+    }
+
+    time, p {
+      font-weight: 400;
+      font-size: 0.875rem;
+      line-height: 1.0625rem;
+    }
+  }
+
+  .HeadingContent {
+    margin-top: 2rem;
+    color: var(--heading);
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 3rem;
+
+    text-align: justify;
+  }
+
+  .PostContent {
+    font-weight: normal;
+
+    p,
+    ul {
+      margin: 1.5rem 0;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+    }
+
+    li {
+      margin: 0.5rem 0;
+    }
+  }
+}
